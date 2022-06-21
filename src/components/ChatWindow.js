@@ -15,7 +15,9 @@ export default function ChatWindow({
   const { response, addDocument } = useFirestore("messages");
   const { error, documentsAll } = useMessages(user.uid, chatWith.id);
 
-  const messagesContainer = document.querySelector(".chat-messages");
+  const messagesContainer = document.querySelector(
+    `.chat-messages-${chatWith.displayName}`
+  );
 
   const sameDay = function (date1, date2) {
     return (
@@ -37,8 +39,11 @@ export default function ChatWindow({
   };
 
   useEffect(() => {
-    if (messagesContainer)
-      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    if (messagesContainer) {
+      console.log("effect!");
+      messagesContainer.scrollTop =
+        messagesContainer.scrollHeight - messagesContainer.clientHeight;
+    }
   }, [documentsAll]);
 
   return (
@@ -52,7 +57,7 @@ export default function ChatWindow({
         <button onClick={() => minimizeWindow(chatWith)}>&minus;</button>
         <button onClick={() => closeChatWindow(chatWith)}>&times;</button>
       </div>
-      <div className="chat-messages">
+      <div className={`chat-messages chat-messages-${chatWith.displayName}`}>
         {error && <p class="fetch-message-error">{error}</p>}
         {documentsAll &&
           documentsAll.map((doc, i, docs) => (
